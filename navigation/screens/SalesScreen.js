@@ -1,12 +1,21 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import Title from "../../components/Title";
+
+const img = require("../../assets/Logo.png");
 
 const SalesScreen = () => {
 	return (
-		<View>
+		<ImageBackground source={img} resizeMode="center" style={styles.container}>
+			<Title title={"Vendas"} />
 			<Text>SalesScreen</Text>
-		</View>
+		</ImageBackground>
 	);
 };
 
 export default SalesScreen;
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
+});

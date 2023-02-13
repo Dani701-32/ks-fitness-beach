@@ -1,34 +1,53 @@
 import React from "react";
-import {
-	Dimensions,
-	ImageBackground,
-	StyleSheet,
-	Text,
-	View,
-} from "react-native";
-import {
-	LineChart,
-	BarChart,
-	PieChart,
-	ProgressChart,
-	ContributionGraph,
-	StackedBarChart,
-} from "react-native-chart-kit";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import { LineChart } from "react-native-chart-kit";
+import Title from "../../components/Title";
 
 const img = require("../../assets/Logo.png");
-const data = [
-	{ month: "Janeiro", profit: Math.random() * 30 },
-	{ month: "Fevereiro", profit: Math.random() * 30 },
-	{ month: "Março", profit: Math.random() * 30 },
-	{ month: "Abril", profit: Math.random() * 30 },
-	{ month: "Maio", profit: Math.random() * 30 },
-	{ month: "Junho", profit: Math.random() * 30 },
+
+const lastSales = [
+	{
+		id: 1,
+		transaction: "Teste",
+		date: "12/10/2023 12:35",
+		price: 50.15,
+		proft: 13.32,
+		products: ["Blusa", "Bermuda"],
+		status: "Em progresso",
+	},
+	{
+		id: 2,
+		transaction: "Teste 2",
+		date: "12/10/2023 12:35",
+		price: 50.15,
+		proft: 13.32,
+		products: ["Blusa"],
+		status: "Cancelado",
+	},
+	{
+		id: 3,
+		transaction: "Teste 3",
+		date: "12/10/2023 12:35",
+		price: 50.15,
+		proft: 13.32,
+		products: ["Blusa"],
+		status: "Concluído",
+	},
+	{
+		id: 4,
+		transaction: "Teste 4",
+		date: "12/10/2023 12:35",
+		price: 50.15,
+		proft: 13.32,
+		products: ["Blusa"],
+		status: "Concluído",
+	},
 ];
 
 const DashBoardScreen = () => {
 	return (
 		<ImageBackground source={img} resizeMode="center" style={styles.container}>
-			<Text style={styles.title}>Faturamento</Text>
+			<Title title={"Faturamento"} />
 			<LineChart
 				data={{
 					labels: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho"],
@@ -45,7 +64,7 @@ const DashBoardScreen = () => {
 						},
 					],
 				}}
-				width={Dimensions.get("window").width - 40} // from react-native
+				width={1040} // from react-native
 				height={330}
 				yAxisLabel="R$"
 				yAxisSuffix="k"
@@ -71,6 +90,37 @@ const DashBoardScreen = () => {
 					borderRadius: 16,
 				}}
 			/>
+			<View>
+				<Title title={"Vendas"} />
+				<Text style={styles.detail}>Listagem das vendas recentes</Text>
+				<View>
+					<View style={styles.tableHeader}>
+						<Text style={styles.tableHeaderItem}>Transação</Text>
+						<Text style={styles.tableHeaderItem}>Data & Hora</Text>
+						<Text style={styles.tableHeaderItem}>Valor (R$)</Text>
+						<Text style={styles.tableHeaderItem}>Lucro (R$)</Text>
+						<Text style={styles.tableHeaderItem.major}>Produtos</Text>
+						<Text style={styles.tableHeaderItem}>Status</Text>
+					</View>
+
+					{lastSales.map((sale) => {
+						return (
+							<View key={sale.id} style={styles.tableBody}>
+								<Text style={styles.tableHeaderItem}>
+									Pagamento por {sale.transaction}
+								</Text>
+								<Text style={styles.tableHeaderItem}>{sale.date}</Text>
+								<Text style={styles.tableHeaderItem}>{sale.price}</Text>
+								<Text style={styles.tableHeaderItem}>{sale.proft}</Text>
+								<Text style={styles.tableHeaderItem.major}>
+									{sale.products.toString()}
+								</Text>
+								<Text style={styles.tableHeaderItem}>{sale.status}</Text>
+							</View>
+						);
+					})}
+				</View>
+			</View>
 		</ImageBackground>
 	);
 };
@@ -82,9 +132,37 @@ const styles = StyleSheet.create({
 		flex: 1,
 		padding: 20,
 	},
-	title: {
-		fontSize: 30,
-		fontweight: "bolder",
-		color: "#44A39B",
+	detail: {
+		fontSize: 14,
+		color: "rgb(132, 132, 132)",
+	},
+	tableHeader: {
+		display: "flex",
+		flexDirection: "row",
+		paddingVertical: 16,
+		borderBottomWidth: 2,
+		borderBottomColor: "#cccccc",
+		backgroundColor: "rgba(215,215,215,0.60)",
+		borderTopRightRadius: 10,
+		borderTopLeftRadius: 10,
+	},
+	tableBody: {
+		display: "flex",
+		flexDirection: "row",
+		paddingVertical: 16,
+		borderBottomWidth: 2,
+		borderBottomColor: "#cccccc",
+	},
+
+	tableHeaderItem: {
+		flex: 1,
+		fontSize: 12,
+		paddingHorizontal: 8,
+		fontWeight: 200,
+		major: {
+			flex: 2,
+			fontSize: 12,
+			fontWeight: 200,
+		},
 	},
 });

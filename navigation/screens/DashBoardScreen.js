@@ -28,7 +28,7 @@ const lastSales = [
 		price: 50.15,
 		proft: 13.32,
 		products: ["Blusa"],
-		status: "Cancelado",
+		status: "canceled",
 	},
 	{
 		id: 3,
@@ -37,7 +37,7 @@ const lastSales = [
 		price: 50.15,
 		proft: 13.32,
 		products: ["Blusa"],
-		status: "Concluído",
+		status: "concluded",
 	},
 	{
 		id: 4,
@@ -46,9 +46,20 @@ const lastSales = [
 		price: 50.15,
 		proft: 13.32,
 		products: ["Blusa"],
-		status: "Concluído",
+		status: "concluded",
 	},
 ];
+
+const Status = ({ status }) => {
+	console.log(status);
+	if (status === "concluded") {
+		return <Text style={styles.tableHeaderItem}> Concluído </Text>;
+	} else if (status === "canceled") {
+		return <Text style={styles.tableHeaderItem}> Cancelado </Text>;
+	} else {
+		return <Text style={styles.tableHeaderItem}> Em Progresso </Text>;
+	}
+};
 
 const DashBoardScreen = () => {
 	return (
@@ -121,7 +132,7 @@ const DashBoardScreen = () => {
 								<Text style={styles.tableHeaderItem.major}>
 									{sale.products.toString()}
 								</Text>
-								<Text style={styles.tableHeaderItem}>{sale.status}</Text>
+								{<Status status={sale.status} />}
 							</Pressable>
 						);
 					})}

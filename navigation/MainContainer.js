@@ -24,7 +24,7 @@ const MainContainer = () => {
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
-				initialRouteName={salesName}
+				initialRouteName={dashboardName}
 				screenOptions={({ route }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;
@@ -47,7 +47,10 @@ const MainContainer = () => {
 					headerShown: false,
 					tabBarActiveTintColor: "#44A39B",
 					tabBarInactiveTintColor: "gray",
-					tabBarStyle: { height: 60, paddingBottom: 10 },
+					tabBarStyle: {
+						height: 60,
+						paddingBottom: 10,
+					},
 				})}
 			>
 				<Tab.Screen name={dashboardName} component={DashBoardScreen} />

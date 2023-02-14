@@ -29,12 +29,13 @@ const DATA = [
 ];
 
 const SalesScreen = () => {
-	const [currentPage, setPage] = useState("");
+	const [currentPage, setPage] = useState("products");
 
 	return (
 		<ImageBackground source={img} resizeMode="center" style={styles.container}>
 			<Title title={"Vendas"} />
 			<Dropdown
+				value={DATA[0]}
 				containerStyle={styles.dropdown.container}
 				itemContainerStyle={styles.dropdownItem}
 				placeholderStyle={styles.placeholder}
@@ -53,8 +54,7 @@ const SalesScreen = () => {
 				}}
 			/>
 			<View>
-				<ProductsPage />
-				{/* {currentPage === "products" && <ProductsPage />} */}
+				{currentPage === "products" && <ProductsPage />}
 				{currentPage === "payments" && <PaymentsPage />}
 				{currentPage === "attendence" && <AttendencePage />}
 			</View>

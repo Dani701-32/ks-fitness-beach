@@ -37,6 +37,7 @@ const SalesScreen = () => {
 			<Dropdown
 				containerStyle={styles.dropdown.container}
 				itemContainerStyle={styles.dropdownItem}
+				placeholderStyle={styles.placeholder}
 				placeholder="Buscar"
 				style={styles.dropdown}
 				backgroundColor={"rgba(0,0,0,0.2)"}
@@ -52,7 +53,8 @@ const SalesScreen = () => {
 				}}
 			/>
 			<View>
-				{currentPage === "products" && <ProductsPage />}
+				<ProductsPage />
+				{/* {currentPage === "products" && <ProductsPage />} */}
 				{currentPage === "payments" && <PaymentsPage />}
 				{currentPage === "attendence" && <AttendencePage />}
 			</View>
@@ -67,10 +69,11 @@ export const styles = StyleSheet.create({
 		padding: 20,
 	},
 	dropdown: {
-		maxWidth: 500,
+		maxWidth: 300,
+		height: 40,
 		borderRadius: 10,
 		backgroundColor: "rgba(215,215,215,0.60)",
-		marginVertical: 10,
+		marginBottom: 10,
 		paddingHorizontal: 10,
 		paddingVertical: 6,
 
@@ -87,5 +90,10 @@ export const styles = StyleSheet.create({
 	dropdownItem: {
 		borderBottomWidth: 1,
 		borderBottomColor: "#eeeeee",
+	},
+	placeholder: {
+		fontSize: 15,
+		alignSelf: "center",
+		fontWeight: 200,
 	},
 });

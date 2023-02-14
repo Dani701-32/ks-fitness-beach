@@ -1,5 +1,11 @@
 import React from "react";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import {
+	ImageBackground,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import Title from "../../components/Title";
 
@@ -65,7 +71,7 @@ const DashBoardScreen = () => {
 					],
 				}}
 				width={1040} // from react-native
-				height={330}
+				height={300}
 				yAxisLabel="R$"
 				yAxisSuffix="k"
 				yAxisInterval={1} // optional, defaults to 1
@@ -93,7 +99,7 @@ const DashBoardScreen = () => {
 			<View>
 				<Title title={"Vendas"} />
 				<Text style={styles.detail}>Listagem das vendas recentes</Text>
-				<View>
+				<View style={styles.table}>
 					<View style={styles.tableHeader}>
 						<Text style={styles.tableHeaderItem}>Transação</Text>
 						<Text style={styles.tableHeaderItem}>Data & Hora</Text>
@@ -105,7 +111,7 @@ const DashBoardScreen = () => {
 
 					{lastSales.map((sale) => {
 						return (
-							<View key={sale.id} style={styles.tableBody}>
+							<Pressable key={sale.id} style={styles.tableBody}>
 								<Text style={styles.tableHeaderItem}>
 									Pagamento por {sale.transaction}
 								</Text>
@@ -116,7 +122,7 @@ const DashBoardScreen = () => {
 									{sale.products.toString()}
 								</Text>
 								<Text style={styles.tableHeaderItem}>{sale.status}</Text>
-							</View>
+							</Pressable>
 						);
 					})}
 				</View>
@@ -128,11 +134,16 @@ const DashBoardScreen = () => {
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
+	table: {
+		overflow: "hidden",
+		borderRadius: 20,
+	},
 	container: {
 		flex: 1,
 		padding: 20,
 	},
 	detail: {
+		marginBottom: 15,
 		fontSize: 14,
 		color: "rgb(132, 132, 132)",
 	},
@@ -143,8 +154,6 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 2,
 		borderBottomColor: "#cccccc",
 		backgroundColor: "rgba(215,215,215,0.60)",
-		borderTopRightRadius: 10,
-		borderTopLeftRadius: 10,
 	},
 	tableBody: {
 		display: "flex",
@@ -152,6 +161,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 16,
 		borderBottomWidth: 2,
 		borderBottomColor: "#cccccc",
+		backgroundColor: "rgba(235,235,235,0.85)",
 	},
 
 	tableHeaderItem: {

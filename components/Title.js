@@ -10,7 +10,8 @@ export default Title;
 const styles = StyleSheet.create({
 	title: {
 		fontSize: 30,
-		fontweight: 900,
+		fontWeight: "bold",
 		color: "#44A39B",
+		marginBottom: 5,
 	},
 });

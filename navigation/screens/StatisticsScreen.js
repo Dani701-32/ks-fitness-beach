@@ -1,5 +1,6 @@
 import React from "react";
-import { ImageBackground, StyleSheet, Text } from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
+
 const img = require("../../assets/Logo.png");
 
 const StatisticsScreen = () => {

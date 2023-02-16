@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Modal } from "react-native-web";
+import * as ImagePicker from "expo-image-picker";
 import Title from "../../components/Title";
 
 const img = require("../../assets/Logo.png");
@@ -44,6 +45,19 @@ const ProductsScreen = () => {
 	const [selected, setSelected] = useState(false);
 	const [visible, setVisible] = useState(false);
 
+	const pickImage = async () => {
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+		console.log(result);
+		if (!result.canceled) {
+			setPhoto(result.assets[0].uri);
+		}
+	};
+
 	const getProducts = async () => {
 		fetch(url)
 			.then((response) => response.json())
@@ -58,6 +72,7 @@ const ProductsScreen = () => {
 	};
 
 	const createProduct = async (product) => {
+		console.log(product);
 		let form_data = new FormData();
 
 		for (let key in product) {
@@ -145,6 +160,7 @@ const ProductsScreen = () => {
 					)}
 				</View>
 			</ModalItem>
+
 			{/* Adicionar Produto */}
 			<ModalItem visible={visible}>
 				<View style={{ alignItems: "center" }}>
@@ -166,6 +182,28 @@ const ProductsScreen = () => {
 							placeholder="Custo"
 							inputMode="decimal"
 						/>
+						<Pressable onPress={pickImage}>
+							<Text>Adicionar uma Imagem</Text>
+						</Pressable>
+						{photo && (
+							<Image
+								source={{ uri: photo }}
+								style={{ width: 200, height: 200 }}
+							/>
+						)}
+						<Pressable style={styles.button} onPress={()=>{}}>
+							<Text
+								style={{
+									alignSelf: "center",
+									color: "#ffffff",
+									fontWeight: "bold",
+									marginRight: 12,
+								}}
+							>
+								Salvar
+							</Text>
+							<Icon name="save" size={18} color="#fff" />
+						</Pressable>
 					</View>
 				</View>
 			</ModalItem>

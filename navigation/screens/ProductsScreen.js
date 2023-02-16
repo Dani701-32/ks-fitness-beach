@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+	Image,
 	ImageBackground,
 	Pressable,
 	StyleSheet,
@@ -15,7 +16,7 @@ const img = require("../../assets/Logo.png");
 // const url = "https://dummyjson.com/products?limit=8";
 const url = "http://10.0.0.122:8000/store/products/";
 
-const ModalAdd = ({ visible, children }) => {
+const ModalItem = ({ visible, children }) => {
 	const [showModal, setVisible] = useState(false);
 
 	const toggleModal = () => {
@@ -37,12 +38,36 @@ const ModalAdd = ({ visible, children }) => {
 
 const ProductsScreen = () => {
 	const [products, setProducts] = useState([]);
+	const [selectedProduct, setSelectedProduct] = useState();
+	const [photo, setPhoto] = useState(null);
+
+	const [selected, setSelected] = useState(false);
 	const [visible, setVisible] = useState(false);
 
 	const getProducts = async () => {
 		fetch(url)
 			.then((response) => response.json())
 			.then((json) => setProducts(json.results));
+	};
+
+	const viewProduct = (product) => {
+		setSelected(true);
+		fetch(`${url}${product}`)
+			.then((response) => response.json())
+			.then((json) => setSelectedProduct(json));
+	};
+
+	const createProduct = async (product) => {
+		let form_data = new FormData();
+
+		for (let key in product) {
+			form_data.append(key, product[key]);
+		}
+
+		fetch(url, {
+			method: "POST",
+			body: form_data,
+		});
 	};
 
 	useEffect(() => {
@@ -64,7 +89,13 @@ const ProductsScreen = () => {
 				<View>
 					{products?.map((product) => {
 						return (
-							<Pressable key={product.id} style={styles.tableBody}>
+							<Pressable
+								key={product.id}
+								style={styles.tableBody}
+								onPress={() => {
+									viewProduct(product.id);
+								}}
+							>
 								<Text style={styles.tableHeaderItem}>{product.name}</Text>
 								<Text style={styles.tableHeaderItem.major}>
 									{product.description}
@@ -93,14 +124,36 @@ const ProductsScreen = () => {
 					<Icon name="add" size={18} color="#fff" />
 				</Pressable>
 			</View>
-			<ModalAdd visible={visible}>
+			<ModalItem visible={selected}>
+				<View style={{ alignItems: "center" }}>
+					<View style={styles.modalHeader}>
+						<Pressable onPress={() => setSelected(false)}>
+							<Icon name="close-sharp" size={24} color="black" />
+						</Pressable>
+					</View>
+					{selectedProduct && (
+						<View styles={styles.modalInputContainer}>
+							<Image
+								source={selectedProduct.image}
+								style={{ width: 50, height: 50 }}
+							/>
+							<Text>{selectedProduct.name}</Text>
+							<Text>{selectedProduct.price}</Text>
+							<Text>{selectedProduct.cost}</Text>
+							<Text>{selectedProduct.category.name}</Text>
+						</View>
+					)}
+				</View>
+			</ModalItem>
+			{/* Adicionar Produto */}
+			<ModalItem visible={visible}>
 				<View style={{ alignItems: "center" }}>
 					<View style={styles.modalHeader}>
 						<Pressable onPress={() => setVisible(false)}>
 							<Icon name="close-sharp" size={24} color="black" />
 						</Pressable>
 					</View>
-					<View>
+					<View styles={styles.modalInputContainer}>
 						<TextInput style={styles.modalInput} placeholder="Nome" />
 						<TextInput style={styles.modalInput} placeholder="Descrição" />
 						<TextInput
@@ -115,7 +168,7 @@ const ProductsScreen = () => {
 						/>
 					</View>
 				</View>
-			</ModalAdd>
+			</ModalItem>
 		</ImageBackground>
 	);
 };
@@ -194,7 +247,11 @@ const styles = StyleSheet.create({
 		alignItems: "flex-end",
 		justifyContent: "center",
 	},
+	modalInputContainer: {
+		width: 500,
+	},
 	modalInput: {
+		witdh: 300,
 		borderWidth: 2,
 		borderColor: "#cccccc",
 		paddingVertical: 12,

@@ -9,7 +9,9 @@ import {
 	View,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { Dropdown } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/Ionicons";
+import { Controller, useForm } from "react-hook-form";
 
 import Title from "../../components/Title";
 import ProductTable from "../../components/ProductTable";
@@ -17,12 +19,22 @@ import ModalItem from "../../components/ModalItem";
 
 const img = require("../../assets/Logo.png");
 
-const url = "http://10.0.0.122:8000/store/products/";
-
+const url = "http://10.0.0.114:8000/store/";
+//categories
 const ProductsScreen = () => {
+	const {
+		control,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({});
+
 	const [products, setProducts] = useState([]);
-	const [photo, setPhoto] = useState(null);
+	const [categories, setCategories] = useState([]);
+
 	const [visible, setVisible] = useState(false);
+	const [isFocus, setIsFocus] = useState(false);
+
+	const [photo, setPhoto] = useState(null);
 
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
@@ -38,9 +50,14 @@ const ProductsScreen = () => {
 	};
 
 	const getProducts = async () => {
-		fetch(url)
+		fetch(`${url}products/`)
 			.then((response) => response.json())
 			.then((json) => setProducts(json.results));
+	};
+	const getCategories = async () => {
+		fetch(`${url}categories/`)
+			.then((response) => response.json())
+			.then((json) => setCategories(json));
 	};
 
 	const createProduct = async (product) => {
@@ -57,6 +74,7 @@ const ProductsScreen = () => {
 
 	useEffect(() => {
 		getProducts();
+		getCategories();
 	}, []);
 
 	return (
@@ -80,28 +98,110 @@ const ProductsScreen = () => {
 					</View>
 					<View style={styles.modalInputContainer}>
 						<View style={{ flex: 2, paddingHorizontal: 10 }}>
-							<TextInput style={styles.modalInput} placeholder="Nome" />
-							<TextInput style={styles.modalInput} placeholder="Descrição" />
-							<TextInput style={styles.modalInput} placeholder="Preço" />
-							<TextInput style={styles.modalInput} placeholder="Custo" />
-							<TextInput style={styles.modalInput} placeholder="Categoria" />
+							<Controller
+								control={control}
+								name="name"
+								render={({ field: { onChange, onBlur, value } }) => (
+									<TextInput
+										style={styles.modalInput}
+										placeholder="Nome"
+										onChange={onChange}
+										onBlur={onBlur}
+										value={value}
+									/>
+								)}
+							/>
+
+							<Controller
+								control={control}
+								name="description"
+								render={({ field: { onChange, onBlur, value } }) => (
+									<TextInput
+										style={styles.modalInput}
+										placeholder="Descrição"
+										onChange={onChange}
+										onBlur={onBlur}
+										value={value}
+									/>
+								)}
+							/>
+							<Controller
+								control={control}
+								name="price"
+								render={({ field: { onChange, onBlur, value } }) => (
+									<TextInput
+										style={styles.modalInput}
+										inputMode="decimal"
+										placeholder="Preço"
+										onChange={onChange}
+										onBlur={onBlur}
+										value={value}
+									/>
+								)}
+							/>
+							<Controller
+								control={control}
+								name="cost"
+								render={({ field: { onChange, onBlur, value } }) => (
+									<TextInput
+										style={styles.modalInput}
+										placeholder="Custo"
+										inputMode="decimal"
+										onChange={onChange}
+										onBlur={onBlur}
+										value={value}
+									/>
+								)}
+							/>
+							<Controller
+								control={control}
+								name="category"
+								render={({ field: { onChange, value } }) => (
+									<Dropdown
+										style={[styles.modalInput, { paddingVertical: 3 }]}
+										data={categories}
+										labelField="name"
+										valueField="id"
+										placeholder={!isFocus ? "Selecione uma categoria" : "..."}
+										onChange={onChange}
+										onFocus={() => setIsFocus(true)}
+										onBlur={() => setIsFocus(false)}
+										value={value}
+									/>
+								)}
+							/>
 						</View>
-						<View style={{ flex: 1, paddingHorizontal: 10 }}>
+						<View
+							style={{
+								flex: 1,
+								paddingHorizontal: 10,
+								alignItems: "flex-end",
+							}}
+						>
 							{(photo && (
 								<Image
 									source={{ uri: photo }}
 									style={{ width: 200, height: 200 }}
 								/>
 							)) || (
-								<View style={{ alignItems: "center" }}>
-									<Icon name="image" size={150} color="balck" />
+								<View style={{ alignItems: "center", width: "100%" }}>
+									<Icon name="image" size={150} color="#cccccc" />
 								</View>
 							)}
-							<Pressable onPress={pickImage} style={styles.button}>
+							<Pressable
+								onPress={pickImage}
+								style={[styles.button, { width: "100%" }]}
+							>
 								<Text style={styles.buttonText}>Adicionar uma Imagem</Text>
 								<Icon name="image" size={24} color="white" />
 							</Pressable>
-							<Pressable style={styles.button} onPress={() => {}}>
+							<Pressable
+								style={[
+									styles.button,
+									{ width: "100%", justifyContent: "center" },
+								]}
+								onPress={handleSubmit(createProduct)}
+							>
 								<Text style={styles.buttonText}>Salvar</Text>
 								<Icon name="save" size={18} color="#fff" />
 							</Pressable>

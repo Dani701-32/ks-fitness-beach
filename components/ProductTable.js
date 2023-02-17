@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import ModalItem from "./ModalItem";
-
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+
+import ModalItem from "./ModalItem";
+import Title from "./Title";
 
 const ProductTable = ({ products, url }) => {
 	const [selected, setSelected] = useState(false);
+	const [product, setProduct] = useState();
 
 	const viewProduct = (product) => {
 		setSelected(true);
-		fetch(`${url}${product}`)
+		fetch(`${url}products/${product}`)
 			.then((response) => response.json())
-			.then((json) => setSelected(json));
+			.then((json) => setProduct(json));
 	};
 	return (
 		<View style={styles.table}>
@@ -52,16 +54,27 @@ const ProductTable = ({ products, url }) => {
 							<Icon name="close-sharp" size={24} color="black" />
 						</Pressable>
 					</View>
-					{selected && (
-						<View styles={styles.modalInputContainer}>
-							<Image
-								source={selected.image}
-								style={{ width: 50, height: 50 }}
-							/>
-							<Text>{selected.name}</Text>
-							<Text>{selected.price}</Text>
-							<Text>{selected.cost}</Text>
-							<Text>{selected.category.name}</Text>
+					{product && (
+						<View style={styles.modalContainer}>
+							<View style={{ flex: 2, paddingHorizontal: 10 }}>
+								<Title title={product.name} />
+								{/* <Text>{}</Text> */}
+								<Text>{product.price}</Text>
+								<Text>{product.cost}</Text>
+								<Text>{product.category.name}</Text>
+							</View>
+							<View
+								style={{
+									flex: 1,
+									paddingHorizontal: 10,
+									alignItems: "flex-end",
+								}}
+							>
+								<Image
+									source={product.image}
+									style={{ width: 200, height: 200 }}
+								/>
+							</View>
 						</View>
 					)}
 				</View>
@@ -104,5 +117,16 @@ const styles = StyleSheet.create({
 			fontSize: 12,
 			fontWeight: 200,
 		},
+	},
+	modalHeader: {
+		width: "100%",
+		height: 40,
+		alignItems: "flex-end",
+		justifyContent: "center",
+	},
+	modalContainer: {
+		width: "100%",
+		display: "flex",
+		flexDirection: "row",
 	},
 });

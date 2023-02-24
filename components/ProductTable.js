@@ -58,7 +58,7 @@ const ProductTable = ({ products, url }) => {
 						<View style={styles.modalContainer}>
 							<View style={{ flex: 2, paddingHorizontal: 10 }}>
 								<Title title={product.name} />
-								{/* <Text>{}</Text> */}
+								<Text>{product.description}</Text>
 								<Text>{product.price}</Text>
 								<Text>{product.cost}</Text>
 								<Text>{product.category.name}</Text>

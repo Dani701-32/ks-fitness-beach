@@ -12,6 +12,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Dropdown } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Controller, useForm } from "react-hook-form";
+import { Blob } from "react-native/Libraries/Blob/File";
+import axios from "axios";
 
 import Title from "../../components/Title";
 import ProductTable from "../../components/ProductTable";
@@ -19,7 +21,8 @@ import ModalItem from "../../components/ModalItem";
 
 const img = require("../../assets/Logo.png");
 
-const url = "http://10.0.0.114:8000/store/";
+const url = "http://10.0.0.118:8000/store/";
+
 //categories
 const ProductsScreen = () => {
 	const {
@@ -37,14 +40,19 @@ const ProductsScreen = () => {
 	const [photo, setPhoto] = useState(null);
 
 	const pickImage = async () => {
-		let result = await ImagePicker.launchImageLibraryAsync({
+		const options = {
+			mediaTypes: "photo",
+			includeBase64: true,
+		};
+		let result = await ImagePicker.launchImageLibraryAsync(options, {
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
 		});
-		console.log(result);
+
 		if (!result.canceled) {
+			console.log(result);
 			setPhoto(result.assets[0].uri);
 		}
 	};
@@ -60,16 +68,34 @@ const ProductsScreen = () => {
 			.then((json) => setCategories(json));
 	};
 
+	const dataURItoFile = (dataURI, filename) => {
+		const arr = dataURI.split(",");
+		const mime = arr[0].match(/:(.*?);/)[1];
+		const bstr = atob(arr[1]);
+		let n = bstr.length;
+		const u8arr = new Uint8Array(n);
+		while (n--) {
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+		return new File([u8arr], filename, { type: mime });
+	};
+
 	const createProduct = async (product) => {
-		console.log(product);
-		// let form_data = new FormData();
-		// for (let key in product) {
-		// 	form_data.append(key, product[key]);
-		// }
-		// fetch(url, {
-		// 	method: "POST",
-		// 	body: form_data,
-		// });
+		const formData = new FormData();
+		const imageFile = dataURItoFile(photo, "image.jpg");
+		formData.append("image", imageFile);
+		formData.append("name", product.name);
+		formData.append("description", product.description);
+		formData.append("price", product.price);
+		formData.append("cost", product.cost);
+		formData.append("category", product.category.id);
+
+		try {
+			const response = await axios.post(`${url}products/`, formData);
+			console.log(response.data);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	useEffect(() => {

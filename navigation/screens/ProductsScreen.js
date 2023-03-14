@@ -12,7 +12,6 @@ import * as ImagePicker from "expo-image-picker";
 import { Dropdown } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Controller, useForm } from "react-hook-form";
-import { Blob } from "react-native/Libraries/Blob/File";
 import axios from "axios";
 
 import Title from "../../components/Title";
@@ -21,7 +20,7 @@ import ModalItem from "../../components/ModalItem";
 
 const img = require("../../assets/Logo.png");
 
-const url = "http://10.0.0.118:8000/store/";
+const url = "http://10.0.0.137:8000/store/";
 
 //categories
 const ProductsScreen = () => {
@@ -71,7 +70,7 @@ const ProductsScreen = () => {
 	const dataURItoFile = (dataURI, filename) => {
 		const arr = dataURI.split(",");
 		const mime = arr[0].match(/:(.*?);/)[1];
-		const bstr = atob(arr[1]);
+		const bstr = window.atob(arr[1]);
 		let n = bstr.length;
 		const u8arr = new Uint8Array(n);
 		while (n--) {
@@ -88,11 +87,13 @@ const ProductsScreen = () => {
 		formData.append("description", product.description);
 		formData.append("price", product.price);
 		formData.append("cost", product.cost);
-		formData.append("category", product.category.id);
+		formData.append("category_id", product.category.id);
 
 		try {
-			const response = await axios.post(`${url}products/`, formData);
-			console.log(response.data);
+			await axios
+				.post(`${url}products/`, formData)
+				.then(() => getProducts())
+				.then(() => setVisible(false));
 		} catch (error) {
 			console.log(error);
 		}

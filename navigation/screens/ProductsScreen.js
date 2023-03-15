@@ -108,7 +108,7 @@ const ProductsScreen = () => {
 		<ImageBackground source={img} resizeMode="center" style={styles.container}>
 			<Title title="Produtos" />
 			<Text style={styles.detail}>Produtos cadastrados no sistema</Text>
-			<ProductTable products={products} url={url} />
+			<ProductTable products={products} url={url} handleTable={getProducts}/>
 			<View>
 				<Pressable style={styles.button} onPress={() => setVisible(true)}>
 					<Text style={styles.buttonText}>Adicionar Novo</Text>

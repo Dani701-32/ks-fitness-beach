@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -5,7 +6,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import ModalItem from "./ModalItem";
 import Title from "./Title";
 
-const ProductTable = ({ products, url }) => {
+const ProductTable = ({ products, url, handleTable }) => {
 	const [selected, setSelected] = useState(false);
 	const [product, setProduct] = useState();
 	const [profit, setProfit] = useState("");
@@ -27,6 +28,13 @@ const ProductTable = ({ products, url }) => {
 			.then((response) => response.json())
 			.then((json) => setProduct(json));
 	};
+	const deleteProduct = async (product_id) => {
+		await axios
+			.delete(`${url}products/${product_id}`)
+			.then(() => setSelected(false))
+			.then(() => handleTable());
+	};
+
 	return (
 		<View style={styles.table}>
 			<View style={styles.tableHeader}>
@@ -92,16 +100,28 @@ const ProductTable = ({ products, url }) => {
 										</View>
 									</View>
 									<View
-										style={{ display: "flex", flexDirection: "row", gap: 5, marginTop: 15 }}
+										style={{
+											display: "flex",
+											flexDirection: "row",
+											gap: 5,
+											marginTop: 15,
+										}}
 									>
 										<View style={styles.modalButton}>
 											<Icon name="create-outline" size={18} color="#fff" />
-											<Text style={{color: "#FFFFFF", fontWeight: "bold"}}>Editar</Text>
+											<Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
+												Editar
+											</Text>
 										</View>
-										<View style={styles.modalButton}>
+										<Pressable
+											style={styles.modalButton}
+											onPress={() => deleteProduct(product.id)}
+										>
 											<Icon name="trash-outline" size={18} color="#fff" />
-											<Text style={{color: "#FFFFFF", fontWeight: "bold"}}>Excluir</Text>
-										</View>
+											<Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
+												Excluir
+											</Text>
+										</Pressable>
 									</View>
 								</View>
 								<View
@@ -181,12 +201,11 @@ const styles = StyleSheet.create({
 	},
 	modalButton: {
 		flex: 1,
-		display:"flex",
+		display: "flex",
 		flexDirection: "row",
 		padding: 5,
 		borderRadius: 5,
 		backgroundColor: "#44A39B",
-		alignItems: "end"
-
+		alignItems: "end",
 	},
 });

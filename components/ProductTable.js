@@ -34,6 +34,9 @@ const ProductTable = ({ products, url, handleTable }) => {
 			.then(() => setSelected(false))
 			.then(() => handleTable());
 	};
+	const truncate = (text, length ) =>{
+		return text.length > length? text.substring(0, length) + '...' : text;
+	}
 
 	return (
 		<View style={styles.table}>
@@ -57,7 +60,7 @@ const ProductTable = ({ products, url, handleTable }) => {
 						>
 							<Text style={styles.tableHeaderItem}>{product.name}</Text>
 							<Text style={styles.tableHeaderItem.major}>
-								{product.description}
+								{truncate(product.description, 50)}
 							</Text>
 							<Text style={styles.tableHeaderItem}>R$ {product.price}</Text>
 							<Text style={styles.tableHeaderItem}>-R$ {product.cost}</Text>

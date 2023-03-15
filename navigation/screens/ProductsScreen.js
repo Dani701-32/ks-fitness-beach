@@ -8,6 +8,7 @@ import {
 	TextInput,
 	View,
 } from "react-native";
+
 import * as ImagePicker from "expo-image-picker";
 import { Dropdown } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -17,6 +18,7 @@ import axios from "axios";
 import Title from "../../components/Title";
 import ProductTable from "../../components/ProductTable";
 import ModalItem from "../../components/ModalItem";
+import CustomInput from "../../components/CustomInput";
 
 const img = require("../../assets/Logo.png");
 
@@ -27,6 +29,7 @@ const ProductsScreen = () => {
 	const {
 		control,
 		handleSubmit,
+		clearErrors,
 		formState: { errors },
 	} = useForm({});
 
@@ -98,7 +101,10 @@ const ProductsScreen = () => {
 			console.log(error);
 		}
 	};
-
+	const closeModal = () => {
+		clearErrors(["name", "description", "price", "cost"]);
+		setVisible(false);
+	};
 	useEffect(() => {
 		getProducts();
 		getCategories();
@@ -108,7 +114,7 @@ const ProductsScreen = () => {
 		<ImageBackground source={img} resizeMode="center" style={styles.container}>
 			<Title title="Produtos" />
 			<Text style={styles.detail}>Produtos cadastrados no sistema</Text>
-			<ProductTable products={products} url={url} handleTable={getProducts}/>
+			<ProductTable products={products} url={url} handleTable={getProducts} />
 			<View>
 				<Pressable style={styles.button} onPress={() => setVisible(true)}>
 					<Text style={styles.buttonText}>Adicionar Novo</Text>
@@ -119,82 +125,68 @@ const ProductsScreen = () => {
 			<ModalItem visible={visible}>
 				<View>
 					<View style={styles.modalHeader}>
-						<Pressable onPress={() => setVisible(false)}>
+						<Pressable onPress={() => closeModal()}>
 							<Icon name="close-sharp" size={24} color="black" />
 						</Pressable>
 					</View>
 					<View style={styles.modalInputContainer}>
 						<View style={{ flex: 2, paddingHorizontal: 10 }}>
-							<Controller
+							<CustomInput
 								control={control}
 								name="name"
-								render={({ field: { onChange, onBlur, value } }) => (
-									<TextInput
-										style={styles.modalInput}
-										placeholder="Nome"
-										onChange={onChange}
-										onBlur={onBlur}
-										value={value}
-									/>
-								)}
+								rules={{ required: "Nome do produto é obrigatório" }}
+								placeholder="Nome do produto"
+								maxLength={20}
+								inputMode="text"
 							/>
-
-							<Controller
+							<CustomInput
 								control={control}
 								name="description"
-								render={({ field: { onChange, onBlur, value } }) => (
-									<TextInput
-										style={styles.modalInput}
-										placeholder="Descrição"
-										onChange={onChange}
-										onBlur={onBlur}
-										value={value}
-									/>
-								)}
+								rules={{ required: "Descrição do produto é obrigatório" }}
+								placeholder="Descrição"
+								maxLength={100}
+								inputMode="text"
 							/>
-							<Controller
+							<CustomInput
 								control={control}
 								name="price"
-								render={({ field: { onChange, onBlur, value } }) => (
-									<TextInput
-										style={styles.modalInput}
-										inputMode="decimal"
-										placeholder="Preço"
-										onChange={onChange}
-										onBlur={onBlur}
-										value={value}
-									/>
-								)}
+								rules={{ required: "Preço é obrigatório" }}
+								placeholder="Preço"
+								inputMode="decimal"
 							/>
-							<Controller
+							<CustomInput
 								control={control}
 								name="cost"
-								render={({ field: { onChange, onBlur, value } }) => (
-									<TextInput
-										style={styles.modalInput}
-										placeholder="Custo"
-										inputMode="decimal"
-										onChange={onChange}
-										onBlur={onBlur}
-										value={value}
-									/>
-								)}
+								rules={{ required: "Custo é obrigatório" }}
+								placeholder="Custo"
+								inputMode="decimal"
 							/>
 							<Controller
 								control={control}
 								name="category"
-								render={({ field: { onChange, value } }) => (
-									<Dropdown
-										style={[styles.modalInput, { paddingVertical: 3 }]}
-										data={categories}
-										labelField="name"
-										valueField="id"
-										placeholder={!isFocus ? "Selecione uma categoria" : "..."}
-										onChange={onChange}
-										onFocus={() => setIsFocus(true)}
-										onBlur={() => setIsFocus(false)}
-										value={value}
-									/>
+								rules={{ required: "Categoria é obrigatório" }}
+								render={({
+									field: { onChange, value },
+									fieldState: { error },
+								}) => (
+									<>
+										{error && (
+											<Text style={{ color: "red", alignSelf: "stretch" }}>
+												{error.message || "Error"}
+											</Text>
+										)}
+										<Dropdown
+											style={[styles.modalInput, { paddingVertical: 3 }]}
+											data={categories}
+											labelField="name"
+											valueField="id"
+											placeholder={!isFocus ? "Selecione uma categoria" : "..."}
+											onChange={onChange}
+											onFocus={() => setIsFocus(true)}
+											onBlur={() => setIsFocus(false)}
+											value={value}
+										/>
+									</>
 								)}
 							/>
 						</View>
@@ -202,13 +194,13 @@ const ProductsScreen = () => {
 							style={{
 								flex: 1,
 								paddingHorizontal: 10,
-								alignItems: "flex-end",
+								alignItems: "center",
 							}}
 						>
 							{(photo && (
 								<Image
 									source={{ uri: photo }}
-									style={{ width: 200, height: 200 }}
+									style={{ width: 180, height: 180 }}
 								/>
 							)) || (
 								<View style={{ alignItems: "center", width: "100%" }}>
@@ -282,7 +274,7 @@ export const styles = StyleSheet.create({
 	},
 	modalInput: {
 		borderWidth: 2,
-		borderColor: "#cccccc",
+		borderColor: "#e8e8e8",
 		paddingVertical: 12,
 		paddingHorizontal: 6,
 		borderRadius: 15,

@@ -5,7 +5,6 @@ import {
 	Pressable,
 	StyleSheet,
 	Text,
-	TextInput,
 	View,
 } from "react-native";
 
@@ -29,9 +28,18 @@ const ProductsScreen = () => {
 	const {
 		control,
 		handleSubmit,
-		clearErrors,
-		formState: { errors },
-	} = useForm({});
+		reset,
+		setValue,
+		formState: {},
+	} = useForm({
+		defaultValues: {
+			name: "",
+			description: "",
+			price: "",
+			cost: "",
+			category: "",
+		},
+	});
 
 	const [products, setProducts] = useState([]);
 	const [categories, setCategories] = useState([]);
@@ -39,6 +47,7 @@ const ProductsScreen = () => {
 	const [visible, setVisible] = useState(false);
 	const [isFocus, setIsFocus] = useState(false);
 
+	const [edit, setEdit] = useState(null);
 	const [photo, setPhoto] = useState(null);
 
 	const pickImage = async () => {
@@ -54,22 +63,9 @@ const ProductsScreen = () => {
 		});
 
 		if (!result.canceled) {
-			console.log(result);
 			setPhoto(result.assets[0].uri);
 		}
 	};
-
-	const getProducts = async () => {
-		fetch(`${url}products/`)
-			.then((response) => response.json())
-			.then((json) => setProducts(json.results));
-	};
-	const getCategories = async () => {
-		fetch(`${url}categories/`)
-			.then((response) => response.json())
-			.then((json) => setCategories(json));
-	};
-
 	const dataURItoFile = (dataURI, filename) => {
 		const arr = dataURI.split(",");
 		const mime = arr[0].match(/:(.*?);/)[1];
@@ -81,30 +77,75 @@ const ProductsScreen = () => {
 		}
 		return new File([u8arr], filename, { type: mime });
 	};
-
+	const getProducts = async () => {
+		fetch(`${url}products/?page_size=11`)
+			.then((response) => response.json())
+			.then((json) => setProducts(json.results));
+	};
+	const getCategories = async () => {
+		fetch(`${url}categories/`)
+			.then((response) => response.json())
+			.then((json) => setCategories(json));
+	};
 	const createProduct = async (product) => {
 		const formData = new FormData();
-		const imageFile = dataURItoFile(photo, "image.jpg");
-		formData.append("image", imageFile);
+		if (photo !== null) {
+			const imageFile = dataURItoFile(photo, "image.jpg");
+			formData.append("image", imageFile);
+		}
 		formData.append("name", product.name);
 		formData.append("description", product.description);
 		formData.append("price", product.price);
 		formData.append("cost", product.cost);
-		formData.append("category_id", product.category.id);
-
+		formData.append("category_id", parseInt(product.category.id));
 		try {
 			await axios
 				.post(`${url}products/`, formData)
 				.then(() => getProducts())
-				.then(() => setVisible(false));
+				.then(() => closeModal());
 		} catch (error) {
 			console.log(error);
 		}
 	};
+	const editProduct = async (product) => {
+		const formData = new FormData();
+		if (photo && photo !== product.image) {
+			const imageFile = dataURItoFile(photo, "image.jpg");
+			formData.append("image", imageFile);
+		}
+		formData.append("name", product.name);
+		formData.append("description", product.description);
+		formData.append("price", product.price);
+		formData.append("cost", product.cost);
+		formData.append("category_id", parseInt(product.category.id));
+		try {
+			await axios
+				.put(`${url}products/${edit}/`, formData)
+				.then(() => getProducts())
+				.then(() => closeModal());
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	const closeModal = () => {
-		clearErrors(["name", "description", "price", "cost"]);
+		reset();
+		setPhoto(null);
+		setEdit(null);
 		setVisible(false);
 	};
+	const editModal = (product) => {
+		setVisible(true);
+		console.log(product);
+		setEdit(product.id);
+		setPhoto(product.image);
+		setValue("name", product.name);
+		setValue("description", product.description);
+		setValue("price", product.price);
+		setValue("cost", product.cost);
+		setValue("category", product.category);
+	};
+
 	useEffect(() => {
 		getProducts();
 		getCategories();
@@ -114,7 +155,13 @@ const ProductsScreen = () => {
 		<ImageBackground source={img} resizeMode="center" style={styles.container}>
 			<Title title="Produtos" />
 			<Text style={styles.detail}>Produtos cadastrados no sistema</Text>
-			<ProductTable products={products} url={url} handleTable={getProducts} />
+
+			<ProductTable
+				products={products}
+				url={url}
+				handleTable={getProducts}
+				handleEdit={editModal}
+			/>
 			<View>
 				<Pressable style={styles.button} onPress={() => setVisible(true)}>
 					<Text style={styles.buttonText}>Adicionar Novo</Text>
@@ -219,9 +266,11 @@ const ProductsScreen = () => {
 									styles.button,
 									{ width: "100%", justifyContent: "center" },
 								]}
-								onPress={handleSubmit(createProduct)}
+								onPress={handleSubmit(edit ? editProduct: createProduct)}
 							>
-								<Text style={styles.buttonText}>Salvar</Text>
+								<Text style={styles.buttonText}>
+									{!edit ? "Salvar" : `Editar ${edit}`}
+								</Text>
 								<Icon name="save" size={18} color="#fff" />
 							</Pressable>
 						</View>

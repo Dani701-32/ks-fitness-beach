@@ -13,8 +13,8 @@ import CategoryScreen from "./screens/CategoryScreen";
 
 //ScreensName
 const dashboardName = "Dashboard";
-const statisctsName = "Estatísticas";
-const salesName = "Produtos";
+const salesName = "Vendas";
+const productsName = "Produtos";
 const categoryName = 'Categorias'
 
 const Tab = createBottomTabNavigator();
@@ -31,9 +31,9 @@ const MainContainer = () => {
 
 						if (rn === dashboardName) {
 							iconName = focused ? "md-pie-chart" : "md-pie-chart-outline";
-						} else if (rn === statisctsName) {
-							iconName = focused ? "bar-chart" : "bar-chart-outline";
 						} else if (rn === salesName) {
+							iconName = focused ? "bar-chart" : "bar-chart-outline";
+						} else if (rn === productsName) {
 							iconName = focused ? "purse" : "purse-outline";
 							return (
 								<MaterialCommunityIcons
@@ -58,8 +58,8 @@ const MainContainer = () => {
 				})}
 			>
 				<Tab.Screen name={dashboardName} component={DashBoardScreen} />
-				<Tab.Screen name={statisctsName} component={StatisticsScreen} />
-				<Tab.Screen name={salesName} component={ProductsScreen} />
+				<Tab.Screen name={salesName} component={StatisticsScreen} />
+				<Tab.Screen name={productsName} component={ProductsScreen} />
 				<Tab.Screen name={categoryName} component={CategoryScreen} />
 			</Tab.Navigator>
 		</NavigationContainer>

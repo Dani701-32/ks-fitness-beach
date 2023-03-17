@@ -9,11 +9,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DashBoardScreen from "./screens/DashBoardScreen";
 import StatisticsScreen from "./screens/StatisticsScreen";
 import ProductsScreen from "./screens/ProductsScreen";
+import CategoryScreen from "./screens/CategoryScreen";
 
 //ScreensName
 const dashboardName = "Dashboard";
 const statisctsName = "Estatísticas";
 const salesName = "Produtos";
+const categoryName = 'Categorias'
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +23,7 @@ const MainContainer = () => {
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
-				initialRouteName={salesName}
+				initialRouteName={categoryName}
 				screenOptions={({ route }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;
@@ -40,6 +42,8 @@ const MainContainer = () => {
 									color={color}
 								/>
 							);
+						}else if(rn===categoryName){
+							iconName = focused? 'albums': 'albums-outline';
 						}
 
 						return <Icon name={iconName} size={size} color={color} />;
@@ -56,6 +60,7 @@ const MainContainer = () => {
 				<Tab.Screen name={dashboardName} component={DashBoardScreen} />
 				<Tab.Screen name={statisctsName} component={StatisticsScreen} />
 				<Tab.Screen name={salesName} component={ProductsScreen} />
+				<Tab.Screen name={categoryName} component={CategoryScreen} />
 			</Tab.Navigator>
 		</NavigationContainer>
 	);

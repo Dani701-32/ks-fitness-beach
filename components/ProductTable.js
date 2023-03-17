@@ -27,13 +27,13 @@ const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 	};
 	const viewProduct = async (product_id) => {
 		setSelected(true);
-		fetch(`${url}products/${product_id}`)
+		fetch(`${url}products/${product_id}/`)
 			.then((response) => response.json())
 			.then((json) => setProduct(json));
 	};
 	const deleteProduct = async (product_id) => {
 		await axios
-			.delete(`${url}products/${product_id}`)
+			.delete(`${url}products/${product_id}/`)
 			.then(() => setSelected(false))
 			.then(() => handleTable());
 	};

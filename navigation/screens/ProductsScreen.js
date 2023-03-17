@@ -21,7 +21,7 @@ import CustomInput from "../../components/CustomInput";
 
 const img = require("../../assets/Logo.png");
 
-const url = "http://10.0.0.137:8000/store/";
+const url = "http://andeen171.pythonanywhere.com/store/";
 
 //categories
 const ProductsScreen = () => {
@@ -109,7 +109,9 @@ const ProductsScreen = () => {
 	};
 	const editProduct = async (product) => {
 		const formData = new FormData();
-		if (photo && photo !== product.image) {
+		console.log(product.image);
+		console.log(photo);
+		if (photo && photo !== product.image && product.image) {
 			const imageFile = dataURItoFile(photo, "image.jpg");
 			formData.append("image", imageFile);
 		}
@@ -266,10 +268,10 @@ const ProductsScreen = () => {
 									styles.button,
 									{ width: "100%", justifyContent: "center" },
 								]}
-								onPress={handleSubmit(edit ? editProduct: createProduct)}
+								onPress={handleSubmit(edit ? editProduct : createProduct)}
 							>
 								<Text style={styles.buttonText}>
-									{!edit ? "Salvar" : `Editar ${edit}`}
+									{!edit ? "Salvar" : `Editar`}
 								</Text>
 								<Icon name="save" size={18} color="#fff" />
 							</Pressable>

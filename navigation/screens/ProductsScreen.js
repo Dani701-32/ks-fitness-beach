@@ -49,6 +49,7 @@ const ProductsScreen = () => {
 
 	const [edit, setEdit] = useState(null);
 	const [photo, setPhoto] = useState(null);
+	
 
 	const pickImage = async () => {
 		const options = {

@@ -23,7 +23,7 @@ const MainContainer = () => {
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
-				initialRouteName={categoryName}
+				initialRouteName={salesName}
 				screenOptions={({ route }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;

@@ -8,6 +8,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useForm } from "react-hook-form";
 import CustomInput from "../../components/CustomInput";
 import axios from "axios";
+import Table from "../../components/table/Table";
 
 const img = require("../../assets/Logo.png");
 const url = "http://andeen171.pythonanywhere.com/store/";
@@ -76,67 +77,52 @@ const CategoryScreen = () => {
 		<ImageBackground source={img} resizeMode="center" style={styles.container}>
 			<Title title="Categorias" />
 			<Text style={styles.detail}>Categorias cadastradas no sistema</Text>
-			<View styles={styles.table}>
-				<View style={styles.tableHeader}>
-					<Text style={styles.tableHeaderItem}>ID</Text>
-					<Text style={styles.tableHeaderItem.major}>Nome</Text>
-					<Text style={styles.tableHeaderItem}>Ações</Text>
+			<Table header={["ID", "Nome", "Ações"]}>
+				{categories?.map((category) => {
+					return (
+						<View key={category.id} style={styles.tableBody}>
+							<Text style={styles.tableBodyItem}>{category.id}</Text>
+							<Text style={styles.tableBodyItem}>{category.name}</Text>
+							<View style={styles.tableBodyItem.button}>
+								<Pressable onPress={() => getCategory(category.id)}>
+									<Text>Editar</Text>
+								</Pressable>
+								<Pressable onPress={() => deleteCategory(category.id)}>
+									<Text>Excluir</Text>
+								</Pressable>
+							</View>
+						</View>
+					);
+				})}
+			</Table>
+			<Pressable onPress={() => setVisible(true)}>
+				<Text>Adicionar</Text>
+			</Pressable>
+			<ModalItem visible={visible}>
+				<View>
+					<Pressable onPress={() => closeModal()}>
+						<Icon name="close-sharp" size={24} color="black" />
+					</Pressable>
 				</View>
 				<View>
-					{categories?.map((category) => {
-						return (
-							<View key={category.id} style={styles.tableBody}>
-								<Text style={styles.tableHeaderItem}>{category.id}</Text>
-								<Text style={styles.tableHeaderItem.major}>
-									{category.name}
-								</Text>
-								<View style={styles.tableHeaderItem.button}>
-									<Pressable onPress={() => getCategory(category.id)}>
-										<Text>Editar</Text>
-									</Pressable>
-									<Pressable onPress={() => deleteCategory(category.id)}>
-										<Text>Excluir</Text>
-									</Pressable>
-								</View>
-							</View>
-						);
-					})}
+					{edit && <Text>ID: {edit}</Text>}
+					<CustomInput
+						control={control}
+						name="name"
+						rules={{ require: "Nome da categoria é obrigatório" }}
+						placeholder="Nome"
+						maxLength={20}
+						inputMode="text"
+					/>
+					<Pressable
+						style={[styles.button, { width: "100%", justifyContent: "center" }]}
+						onPress={handleSubmit(edit ? editCategory : createCategory)}
+					>
+						<Text style={styles.buttonText}>{!edit ? "Salvar" : `Editar`}</Text>
+						<Icon name="save" size={18} color="#fff" />
+					</Pressable>
 				</View>
-				<Pressable onPress={() => setVisible(true)}>
-					<Text>Adicionar</Text>
-				</Pressable>
-
-				<ModalItem visible={visible}>
-					<View>
-						<Pressable onPress={() => closeModal()}>
-							<Icon name="close-sharp" size={24} color="black" />
-						</Pressable>
-					</View>
-					<View>
-						{edit && <Text>ID: {edit}</Text>}
-						<CustomInput
-							control={control}
-							name="name"
-							rules={{ require: "Nome da categoria é obrigatório" }}
-							placeholder="Nome"
-							maxLength={20}
-							inputMode="text"
-						/>
-						<Pressable
-							style={[
-								styles.button,
-								{ width: "100%", justifyContent: "center" },
-							]}
-							onPress={handleSubmit(edit ? editCategory : createCategory)}
-						>
-							<Text style={styles.buttonText}>
-								{!edit ? "Salvar" : `Editar`}
-							</Text>
-							<Icon name="save" size={18} color="#fff" />
-						</Pressable>
-					</View>
-				</ModalItem>
-			</View>
+			</ModalItem>
 		</ImageBackground>
 	);
 };
@@ -153,14 +139,6 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: "rgb(132, 132, 132)",
 	},
-	tableHeader: {
-		display: "flex",
-		flexDirection: "row",
-		paddingVertical: 16,
-		borderBottomWidth: 2,
-		borderBottomColor: "#cccccc",
-		backgroundColor: "rgba(215,215,215,0.60)",
-	},
 	tableBody: {
 		display: "flex",
 		flexDirection: "row",
@@ -169,17 +147,12 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#cccccc",
 		backgroundColor: "rgba(235,235,235,0.85)",
 	},
-	tableHeaderItem: {
+	tableBodyItem: {
 		flex: 1,
 		fontSize: 12,
 		alignSelf: "center",
 		fontWeight: "200",
 		paddingHorizontal: 8,
-		major: {
-			flex: 2,
-			fontSize: 12,
-			fontWeight: 200,
-		},
 		button: {
 			flex: 1,
 			display: "flex",

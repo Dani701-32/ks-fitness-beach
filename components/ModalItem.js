@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet } from "react-native";
 import { View } from "react-native";
 
-const ModalItem = ({ visible, children, handleTable }) => {
+const ModalItem = ({ visible, children}) => {
 	const [showModal, setVisible] = useState(false);
 
 	const toggleModal = () => {

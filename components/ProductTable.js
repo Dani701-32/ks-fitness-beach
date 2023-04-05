@@ -1,10 +1,12 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+
 import Icon from "react-native-vector-icons/Ionicons";
 
-import ModalItem from "./ModalItem";
 import Title from "./Title";
+import Table from "./table/Table";
+import ModalItem from "./ModalItem";
 
 const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 	const [selected, setSelected] = useState(false);
@@ -37,21 +39,13 @@ const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 			.then(() => setSelected(false))
 			.then(() => handleTable());
 	};
-	const editProductForm = () =>{
+	const editProductForm = () => {
 		setSelected(false);
 		handleEdit(product);
-	}
-
+	};
 	return (
-		<View style={styles.table}>
-			<View style={styles.tableHeader}>
-				<Text style={styles.tableHeaderItem}>Nome</Text>
-				<Text style={styles.tableHeaderItem.major}>Descrição</Text>
-				<Text style={styles.tableHeaderItem}>Preço</Text>
-				<Text style={styles.tableHeaderItem}>Custo</Text>
-				<Text style={styles.tableHeaderItem}>Categoria</Text>
-			</View>
-			<View>
+		<>
+			<Table header={["Nome", "Descrição", "Preço", "Custo", "Categoria"]}>
 				{products?.map((product) => {
 					return (
 						<Pressable
@@ -62,113 +56,92 @@ const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 								getProfit(product);
 							}}
 						>
-							<Text style={styles.tableHeaderItem}>{product.name}</Text>
-							<Text style={styles.tableHeaderItem.major}>
+							<Text style={styles.tableBodyItem}>{product.name}</Text>
+							<Text style={styles.tableBodyItem}>
 								{truncate(product.description, 50)}
 							</Text>
-							<Text style={styles.tableHeaderItem}>R$ {product.price}</Text>
-							<Text style={styles.tableHeaderItem}>-R$ {product.cost}</Text>
-							<Text style={styles.tableHeaderItem}>
-								{product.category.name}
-							</Text>
+							<Text style={styles.tableBodyItem}>R$ {product.price}</Text>
+							<Text style={styles.tableBodyItem}>-R$ {product.cost}</Text>
+							<Text style={styles.tableBodyItem}>{product.category.name}</Text>
 						</Pressable>
 					);
 				})}
-			</View>
+			</Table>
 			<ModalItem visible={selected}>
-				<View style={{ alignItems: "center" }}>	
-						{product && (
-							<>
-								<View style={styles.modalHeader}>
-									<Title title={`${product.category.name} - ${product.name}`} />
-									<Pressable onPress={() => setSelected(false)}>
-										<Icon name="close-sharp" size={24} color="black" />
-									</Pressable>
-								</View>
-								<View style={styles.modalContainer}>
-									<View style={{ flex: 2, paddingHorizontal: 10 }}>
-										<Text style={styles.modalDescription}>
-											{product.description}
-										</Text>
-										<View style={styles.table}>
-											<View style={styles.tableHeader}>
-												<Text style={styles.tableHeaderItem}>Preço</Text>
-												<Text style={styles.tableHeaderItem}>Custo</Text>
-												<Text style={styles.tableHeaderItem}>Balanço</Text>
-											</View>
-											<View style={styles.tableBody}>
-												<Text style={styles.tableHeaderItem}>
-													R$ {product.price}
-												</Text>
-												<Text style={styles.tableHeaderItem}>
-													R$ {product.cost}
-												</Text>
-												<Text style={styles.tableHeaderItem}>{profit}</Text>
-											</View>
+				<View style={{ alignItems: "center" }}>
+					{product && (
+						<>
+							<View style={styles.modalHeader}>
+								<Title title={`${product.category.name} - ${product.name}`} />
+								<Pressable onPress={() => setSelected(false)}>
+									<Icon name="close-sharp" size={24} color="black" />
+								</Pressable>
+							</View>
+							<View style={styles.modalContainer}>
+								<View style={{ flex: 2, paddingHorizontal: 10 }}>
+									<Text style={styles.modalDescription}>
+										{product.description}
+									</Text>
+									<Table header={["Preço", "Custo", "Balanço"]}>
+										<View style={styles.tableBody}>
+											<Text style={styles.tableBodyItem}>
+												R$ {product.price}
+											</Text>
+											<Text style={styles.tableBodyItem}>
+												R$ {product.cost}
+											</Text>
+											<Text style={styles.tableBodyItem}>{profit}</Text>
 										</View>
-										<View
-											style={{
-												display: "flex",
-												flexDirection: "row",
-												gap: 5,
-												marginTop: 15,
-											}}
+									</Table>
+									<View style={styles.modalButtonContainer}>
+										<Pressable
+											style={styles.modalButton}
+											onPress={() => editProductForm()}
 										>
-											<Pressable style={styles.modalButton} onPress={()=> editProductForm()}>
-												<Icon name="create-outline" size={18} color="#fff" />
-												<Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-													Editar
-												</Text>
-											</Pressable>
-											<Pressable
-												style={[styles.modalButton, {backgroundColor: '#DF6060'}]}
-												onPress={() => deleteProduct(product.id)}
-											>
-												<Icon name="trash-outline" size={18} color="#fff" />
-												<Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-													Excluir
-												</Text>
-											</Pressable>
-										</View>
-									</View>
-									<View
-										style={{
-											flex: 1,
-											paddingHorizontal: 10,
-											alignItems: "center",
-											borderRadius: 30,
-										}}
-									>
-										<Image
-											source={product.image}
-											style={{ width: 200, height: 200, borderRadius: 12 }}
-										/>
+											<Icon name="create-outline" size={18} color="#fff" />
+											<Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
+												Editar
+											</Text>
+										</Pressable>
+										<Pressable
+											style={[
+												styles.modalButton,
+												{ backgroundColor: "#DF6060" },
+											]}
+											onPress={() => deleteProduct(product.id)}
+										>
+											<Icon name="trash-outline" size={18} color="#fff" />
+											<Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
+												Excluir
+											</Text>
+										</Pressable>
 									</View>
 								</View>
-							</>
-						)}
-					
+								<View
+									style={{
+										flex: 1,
+										paddingHorizontal: 10,
+										alignItems: "center",
+										borderRadius: 30,
+									}}
+								>
+									<Image
+										source={product.image}
+										style={{ width: 200, height: 200, borderRadius: 12 }}
+									/>
+								</View>
+							</View>
+						</>
+					)}
 				</View>
 			</ModalItem>
-		</View>
+		</>
 	);
 };
 
 export default ProductTable;
 
 const styles = StyleSheet.create({
-	table: {
-		overflow: "hidden",
-		borderRadius: 16,
-	},
-	tableHeader: {
-		display: "flex",
-		flexDirection: "row",
-		paddingVertical: 16,
-		borderBottomWidth: 2,
-		borderBottomColor: "#cccccc",
-		backgroundColor: "rgba(215,215,215,0.60)",
-	},
 	tableBody: {
 		display: "flex",
 		flexDirection: "row",
@@ -177,17 +150,12 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#cccccc",
 		backgroundColor: "rgba(235,235,235,0.85)",
 	},
-	tableHeaderItem: {
+	tableBodyItem: {
 		flex: 1,
 		fontSize: 12,
 		alignSelf: "center",
 		fontWeight: "200",
 		paddingHorizontal: 8,
-		major: {
-			flex: 2,
-			fontSize: 12,
-			fontWeight: 200,
-		},
 	},
 	modalHeader: {
 		flexDirection: "row",
@@ -206,6 +174,12 @@ const styles = StyleSheet.create({
 	modalDescription: {
 		fontSize: 17,
 		marginBottom: 20,
+	},
+	modalButtonContainer: {
+		display: "flex",
+		flexDirection: "row",
+		gap: 5,
+		marginTop: 15,
 	},
 	modalButton: {
 		flex: 1,

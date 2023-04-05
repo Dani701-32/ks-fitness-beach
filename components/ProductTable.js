@@ -93,6 +93,21 @@ const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 											<Text style={styles.tableBodyItem}>{profit}</Text>
 										</View>
 									</Table>
+									<View style={{marginTop: 12}}>
+
+									<Table header={["Tamanho", "Estoque"]}>
+										{product.stocks?.map((stock) => {
+											return (
+												<View style={styles.tableBody} key={stock.id}>
+													<Text style={styles.tableBodyItem}>{stock.size}</Text>
+													<Text style={styles.tableBodyItem}>
+														{stock.quantity} unidades
+													</Text>
+												</View>
+											);
+										})}
+									</Table>
+									</View>
 									<View style={styles.modalButtonContainer}>
 										<Pressable
 											style={styles.modalButton}
@@ -127,7 +142,7 @@ const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 								>
 									<Image
 										source={product.image}
-										style={{ width: 200, height: 200, borderRadius: 12 }}
+										style={{ width: 300, height: 300, borderRadius: 12 }}
 									/>
 								</View>
 							</View>

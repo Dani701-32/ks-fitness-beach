@@ -49,7 +49,6 @@ const ProductsScreen = () => {
 
 	const [edit, setEdit] = useState(null);
 	const [photo, setPhoto] = useState(null);
-	
 
 	const pickImage = async () => {
 		const options = {
@@ -138,8 +137,8 @@ const ProductsScreen = () => {
 		setVisible(false);
 	};
 	const editModal = (product) => {
+		getCategories();
 		setVisible(true);
-		console.log(product);
 		setEdit(product.id);
 		setPhoto(product.image);
 		setValue("name", product.name);
@@ -148,10 +147,13 @@ const ProductsScreen = () => {
 		setValue("cost", product.cost);
 		setValue("category", product.category);
 	};
+	const openModal = async () => {
+		await getCategories();
+		await setVisible(true);
+	};
 
 	useEffect(() => {
 		getProducts();
-		getCategories();
 	}, []);
 
 	return (
@@ -166,7 +168,7 @@ const ProductsScreen = () => {
 				handleEdit={editModal}
 			/>
 			<View>
-				<Pressable style={styles.button} onPress={() => setVisible(true)}>
+				<Pressable style={styles.button} onPress={() => openModal()}>
 					<Text style={styles.buttonText}>Adicionar Novo</Text>
 					<Icon name="add" size={18} color="#fff" />
 				</Pressable>
@@ -259,7 +261,7 @@ const ProductsScreen = () => {
 							)}
 							<Pressable
 								onPress={pickImage}
-								style={[styles.button, { width: "100%" }]}
+								style={[styles.button, { width: "100%", justifyContent: "center" }]}
 							>
 								<Text style={styles.buttonText}>Adicionar uma Imagem</Text>
 								<Icon name="image" size={24} color="white" />

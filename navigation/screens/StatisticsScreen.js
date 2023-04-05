@@ -67,7 +67,7 @@ const StatisticsScreen = () => {
 					return (
 						<View key={sale.id} style={styles.tableBody}>
 							<Text style={styles.tableHeaderItem}>{sale.id}</Text>
-							<Text style={styles.tableHeaderItem}>{sale.products[0].product}</Text>
+							<Text style={styles.tableHeaderItem}></Text>
 							<Text style={styles.tableHeaderItem}>{sale.created_at}</Text>
 						</View>
 					);

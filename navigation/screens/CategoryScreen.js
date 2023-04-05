@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import CustomInput from "../../components/CustomInput";
 import axios from "axios";
 import Table from "../../components/table/Table";
+import TextTable from "../../components/table/TextTable";
 
 const img = require("../../assets/Logo.png");
 const url = "http://andeen171.pythonanywhere.com/store/";
@@ -81,22 +82,31 @@ const CategoryScreen = () => {
 				{categories?.map((category) => {
 					return (
 						<View key={category.id} style={styles.tableBody}>
-							<Text style={styles.tableBodyItem}>{category.id}</Text>
-							<Text style={styles.tableBodyItem}>{category.name}</Text>
-							<View style={styles.tableBodyItem.button}>
-								<Pressable onPress={() => getCategory(category.id)}>
-									<Text>Editar</Text>
+							<TextTable text={category.id} />
+							<TextTable text={category.name} />
+							<View style={styles.tableButton}>
+								<Pressable
+									onPress={() => getCategory(category.id)}
+									style={styles.editButton}
+								>
+									<Icon name="pencil-outline" size={25} color="#fff" />
+									<Text style={styles.textButton}>Editar</Text>
 								</Pressable>
-								<Pressable onPress={() => deleteCategory(category.id)}>
-									<Text>Excluir</Text>
+								<Pressable
+									onPress={() => deleteCategory(category.id)}
+									style={styles.deleteButton}
+								>
+									<Icon name="trash-outline" size={25} color="#fff" />
+									<Text style={styles.textButton}>Apagar</Text>
 								</Pressable>
 							</View>
 						</View>
 					);
 				})}
 			</Table>
-			<Pressable onPress={() => setVisible(true)}>
-				<Text>Adicionar</Text>
+			<Pressable style={styles.addButton} onPress={() => setVisible(true)}>
+				<Text style={styles.textButton}>Adicionar Novo</Text>
+				<Icon name="add" size={18} color="#fff" />
 			</Pressable>
 			<ModalItem visible={visible}>
 				<View>
@@ -142,22 +152,52 @@ const styles = StyleSheet.create({
 	tableBody: {
 		display: "flex",
 		flexDirection: "row",
-		paddingVertical: 16,
+		paddingVertical: 10,
 		borderBottomWidth: 2,
 		borderBottomColor: "#cccccc",
 		backgroundColor: "rgba(235,235,235,0.85)",
 	},
-	tableBodyItem: {
+	tableButton: {
 		flex: 1,
-		fontSize: 12,
-		alignSelf: "center",
-		fontWeight: "200",
+		display: "flex",
+		flexDirection: "row",
+		gap: 20,
 		paddingHorizontal: 8,
-		button: {
-			flex: 1,
-			display: "flex",
-			flexDirection: "row",
-			gap: 10,
-		},
+	},
+	editButton: {
+		backgroundColor: "#44A39B",
+		paddingHorizontal: 5,
+		paddingVertical: 3,
+		borderRadius: 10,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		flex: 1,
+	},
+	deleteButton: {
+		backgroundColor: "#DF6060",
+		paddingHorizontal: 5,
+		paddingVertical: 3,
+		borderRadius: 10,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		flex: 1,
+	},
+	textButton: {
+		color: "#FFFF",
+		fontWeight: "700",
+		width: "100%",
+		textAlign: "center",
+	},
+	addButton: {
+		width: "fit-content",
+		backgroundColor: "#44a39b",
+		marginTop: 20,
+		paddingVertical: 10,
+		paddingHorizontal: 8,
+		borderRadius: 14,
+		display: "flex",
+		flexDirection: "row",
 	},
 });

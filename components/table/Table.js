@@ -36,9 +36,10 @@ const styles = StyleSheet.create({
 	},
 	tableHeaderItem: {
 		flex: 1,
-		fontSize: 12,
+		fontSize: 15,
 		alignSelf: "center",
-		fontWeight: "200",
-		paddingHorizontal: 8,
+		fontWeight: "700",
+		paddingHorizontal: 10,
+		color: "#35615d"
 	},
 });

@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import Title from "./Title";
 import Table from "./table/Table";
 import ModalItem from "./ModalItem";
+import TextTable from "./table/TextTable";
 
 const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 	const [selected, setSelected] = useState(false);
@@ -56,13 +57,11 @@ const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 								getProfit(product);
 							}}
 						>
-							<Text style={styles.tableBodyItem}>{product.name}</Text>
-							<Text style={styles.tableBodyItem}>
-								{truncate(product.description, 50)}
-							</Text>
-							<Text style={styles.tableBodyItem}>R$ {product.price}</Text>
-							<Text style={styles.tableBodyItem}>-R$ {product.cost}</Text>
-							<Text style={styles.tableBodyItem}>{product.category.name}</Text>
+							<TextTable text={product.name} />
+							<TextTable text={truncate(product.description, 50)} />
+							<TextTable text={`R$ ${product.price}`} />
+							<TextTable text={`-R$ ${product.cost}`} />
+							<TextTable text={product.category.name} />
 						</Pressable>
 					);
 				})}
@@ -84,36 +83,29 @@ const ProductTable = ({ products, url, handleTable, handleEdit }) => {
 									</Text>
 									<Table header={["Preço", "Custo", "Balanço"]}>
 										<View style={styles.tableBody}>
-											<Text style={styles.tableBodyItem}>
-												R$ {product.price}
-											</Text>
-											<Text style={styles.tableBodyItem}>
-												R$ {product.cost}
-											</Text>
-											<Text style={styles.tableBodyItem}>{profit}</Text>
+											<TextTable text={`R$ ${product.price}`} />
+											<TextTable text={`R$ ${product.cost}`} />
+											<TextTable text={profit} />
 										</View>
 									</Table>
-									<View style={{marginTop: 12}}>
-
-									<Table header={["Tamanho", "Estoque"]}>
-										{product.stocks?.map((stock) => {
-											return (
-												<View style={styles.tableBody} key={stock.id}>
-													<Text style={styles.tableBodyItem}>{stock.size}</Text>
-													<Text style={styles.tableBodyItem}>
-														{stock.quantity} unidades
-													</Text>
-												</View>
-											);
-										})}
-									</Table>
+									<View style={{ marginTop: 12 }}>
+										<Table header={["Tamanho", "Estoque"]}>
+											{product.stocks?.map((stock) => {
+												return (
+													<View style={styles.tableBody} key={stock.id}>
+														<TextTable text={stock.size} />
+														<TextTable text={`${stock.quantity} unidades`} />
+													</View>
+												);
+											})}
+										</Table>
 									</View>
 									<View style={styles.modalButtonContainer}>
 										<Pressable
 											style={styles.modalButton}
 											onPress={() => editProductForm()}
 										>
-											<Icon name="create-outline" size={18} color="#fff" />
+											<Icon name="pencil-outline" size={18} color="#fff" />
 											<Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
 												Editar
 											</Text>
@@ -164,13 +156,6 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 2,
 		borderBottomColor: "#cccccc",
 		backgroundColor: "rgba(235,235,235,0.85)",
-	},
-	tableBodyItem: {
-		flex: 1,
-		fontSize: 12,
-		alignSelf: "center",
-		fontWeight: "200",
-		paddingHorizontal: 8,
 	},
 	modalHeader: {
 		flexDirection: "row",

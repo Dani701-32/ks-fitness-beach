@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet } from "react-native";
 import { View } from "react-native";
 
-const ModalItem = ({ visible, children}) => {
+const ModalItem = ({ visible, children, porcent }) => {
 	const [showModal, setVisible] = useState(false);
 
 	const toggleModal = () => {
@@ -16,7 +16,14 @@ const ModalItem = ({ visible, children}) => {
 	return (
 		<Modal transparent visible={showModal}>
 			<View style={styles.modalBackground}>
-				<View style={styles.modalContainer}>{children}</View>
+				<View
+					style={[
+						styles.modalContainer,
+						{ width: `${porcent ? porcent : 90}%` },
+					]}
+				>
+					{children}
+				</View>
 			</View>
 		</Modal>
 	);
@@ -32,7 +39,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	modalContainer: {
-		width: "90%",
 		backgroundColor: "white",
 		paddingHorizontal: 20,
 		paddingVertical: 30,

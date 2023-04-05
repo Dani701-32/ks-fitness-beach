@@ -28,9 +28,9 @@ const CategoryScreen = () => {
 	});
 
 	const [categories, setCategories] = useState(null);
-	const [category, setCategory] = useState(null);
 	const [edit, setEdit] = useState(null);
 	const [visible, setVisible] = useState(false);
+	const [del, setDelete] = useState(null);
 
 	const getCategories = async () => {
 		fetch(`${url}categories/`)
@@ -45,7 +45,6 @@ const CategoryScreen = () => {
 			.then(() => closeModal());
 	};
 	const editCategory = async (edit_category) => {
-		console.log(edit_category);
 		await axios
 			.put(`${url}/categories/${edit}/`, { name: edit_category.name })
 			.then(() => getCategories())
@@ -57,17 +56,24 @@ const CategoryScreen = () => {
 			.then((json) => editModal(json));
 	};
 	const editModal = (category) => {
-		setVisible(true);
-		setValue("name", category.name);
 		setEdit(category.id);
+		setValue("name", category.name);
+		setVisible(true);
+	};
+	const alertDeleteCategory = (category_id) => {
+		setDelete(category_id);
+		setVisible(true);
 	};
 	const deleteCategory = async (category_id) => {
 		axios
 			.delete(`${url}/categories/${category_id}/`)
-			.then(() => getCategories());
+			.then(() => getCategories())
+			.then(() => closeModal());
 	};
 	const closeModal = () => {
+		setDelete(null);
 		setVisible(false);
+		setEdit(null);
 		reset();
 	};
 
@@ -93,7 +99,7 @@ const CategoryScreen = () => {
 									<Text style={styles.textButton}>Editar</Text>
 								</Pressable>
 								<Pressable
-									onPress={() => deleteCategory(category.id)}
+									onPress={() => alertDeleteCategory(category.id)}
 									style={styles.deleteButton}
 								>
 									<Icon name="trash-outline" size={25} color="#fff" />
@@ -108,30 +114,67 @@ const CategoryScreen = () => {
 				<Text style={styles.textButton}>Adicionar Novo</Text>
 				<Icon name="add" size={18} color="#fff" />
 			</Pressable>
-			<ModalItem visible={visible}>
-				<View>
-					<Pressable onPress={() => closeModal()}>
-						<Icon name="close-sharp" size={24} color="black" />
-					</Pressable>
-				</View>
-				<View>
-					{edit && <Text>ID: {edit}</Text>}
-					<CustomInput
-						control={control}
-						name="name"
-						rules={{ require: "Nome da categoria é obrigatório" }}
-						placeholder="Nome"
-						maxLength={20}
-						inputMode="text"
-					/>
-					<Pressable
-						style={[styles.button, { width: "100%", justifyContent: "center" }]}
-						onPress={handleSubmit(edit ? editCategory : createCategory)}
-					>
-						<Text style={styles.buttonText}>{!edit ? "Salvar" : `Editar`}</Text>
-						<Icon name="save" size={18} color="#fff" />
-					</Pressable>
-				</View>
+			<ModalItem visible={visible} porcent={60}>
+				{del ? (
+					<>
+						<Text style={styles.deleteTitle}>{`Apagar categoria ${del}?`}</Text>
+						<Text style={styles.deleteText}>
+							Você em certeza que gostaria de apagar essa categoria? Caso
+							deletada todos os produtos que pertencem a essa cetegoria também
+							serão apagados! Continuar?
+						</Text>
+						<View style={styles.deleteButtons}>
+							<Pressable
+								style={styles.cancelButton}
+								onPress={() => closeModal()}
+							>
+								<Text style={[styles.textButton, { color: "#44A39B" }]}>
+									Cancelar
+								</Text>
+							</Pressable>
+							<Pressable
+								style={styles.deleteButtonModal}
+								onPress={() => deleteCategory(del)}
+							>
+								<Text style={styles.textButton}>Apagar</Text>
+							</Pressable>
+						</View>
+					</>
+				) : (
+					<>
+						<View style={styles.modalHeader}>
+							<Title title={edit ? `Categoria: ${edit}` : "Criar categoria"} />
+							<Pressable
+								onPress={() => closeModal()}
+								style={{ width: "fit-content" }}
+							>
+								<Icon name="close-sharp" size={24} color="black" />
+							</Pressable>
+						</View>
+						<View>
+							<CustomInput
+								control={control}
+								name="name"
+								rules={{ require: "Nome da categoria é obrigatório" }}
+								placeholder="Nome"
+								maxLength={20}
+								inputMode="text"
+							/>
+							<Pressable
+								style={[
+									styles.addButton,
+									{ gap: 10, marginTop: 5, paddingHorizontal: 10 },
+								]}
+								onPress={handleSubmit(edit ? editCategory : createCategory)}
+							>
+								<Text style={styles.textButton}>
+									{!edit ? "Salvar" : `Editar`}
+								</Text>
+								<Icon name="save" size={20} color="#fff" />
+							</Pressable>
+						</View>
+					</>
+				)}
 			</ModalItem>
 		</ImageBackground>
 	);
@@ -199,5 +242,50 @@ const styles = StyleSheet.create({
 		borderRadius: 14,
 		display: "flex",
 		flexDirection: "row",
+	},
+	modalHeader: {
+		display: "flex",
+		width: "100%",
+		flexDirection: "row",
+		justifyContent: "space-between",
+	},
+	deleteTitle: {
+		fontSize: 27,
+		fontWeight: "bold",
+		color: "#f44336",
+		marginBottom: 10,
+		textAlign: "center",
+	},
+	deleteText: {
+		color: "#67150f",
+		fontSize: 18,
+		marginBottom: 50,
+		paddingHorizontal: 3,
+		textAlign: "center",
+	},
+	deleteButtons: {
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		gap: 20,
+	},
+	deleteButtonModal: {
+		backgroundColor: "#DF6060",
+		paddingVertical: 10,
+		borderRadius: 10,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		flex: 1,
+	},
+	cancelButton: {
+		paddingVertical: 10,
+		borderRadius: 10,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		flex: 1,
+		borderWidth: 3,
+		borderColor: "#44a39b",
 	},
 });

@@ -111,7 +111,9 @@ const CategoryScreen = () => {
 				})}
 			</Table>
 			<Pressable style={styles.addButton} onPress={() => setVisible(true)}>
-				<Text style={styles.textButton}>Adicionar Novo</Text>
+				<Text style={[styles.textButton, { marginRight: 12 }]}>
+					Adicionar Novo
+				</Text>
 				<Icon name="add" size={18} color="#fff" />
 			</Pressable>
 			<ModalItem visible={visible} porcent={60}>
